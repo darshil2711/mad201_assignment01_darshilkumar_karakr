@@ -11,69 +11,106 @@ import '../models/tourist_destination.dart';
 import '../models/cultural_destination.dart';
 
 class DetailsScreen extends StatelessWidget {
+  const DetailsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final model = TravelAppState.of(context);
-    final args = ModalRoute.of(context)!.settings.arguments;
-    if (args == null) {
-      return Scaffold(appBar: AppBar(title: Text('Details')), body: Center(child: Text('No destination provided')));
+    final args = ModalRoute.of(context)?.settings.arguments;
+
+    if (args == null || args is! String) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Details')),
+        body: const Center(child: Text('No destination provided')),
+      );
     }
-    final String id = args as String;
-    final dest = model.getById(id);
+
+    final String id = args;
+    final Destination? dest = model.getById(id);
+
     if (dest == null) {
-      return Scaffold(appBar: AppBar(title: Text('Details')), body: Center(child: Text('Destination not found')));
+      return Scaffold(
+        appBar: AppBar(title: const Text('Details')),
+        body: const Center(child: Text('Destination not found')),
+      );
     }
 
     return Scaffold(
       appBar: AppBar(
         title: Text(dest.name),
         actions: [
-          IconButton(icon: Icon(dest.isFavorite ? Icons.star : Icons.star_border), onPressed: () => model.toggleFavorite(dest.id)),
+          IconButton(
+            icon: Icon(dest.isFavorite ? Icons.star : Icons.star_border),
+            onPressed: () => model.toggleFavorite(dest.id),
+          ),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(
               children: [
-                Image.asset(dest.imageUrl, width: double.infinity, height: 240, fit: BoxFit.cover),
+                Image.asset(
+                  dest.imageUrl,
+                  width: double.infinity,
+                  height: 240,
+                  fit: BoxFit.cover,
+                ),
                 if (dest.isVisited)
-                  Positioned(top: 12, right: 12, child: VisitedBadge()),
+                  const Positioned(
+                    top: 12,
+                    right: 12,
+                    child: VisitedBadge(),
+                  ),
               ],
             ),
             Padding(
-              padding: EdgeInsets.all(12),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(dest.name, style: Theme.of(context).textTheme.headline6),
-                SizedBox(height: 6),
-                Text(dest.country),
-                SizedBox(height: 12),
-                Text(dest.description),
-                SizedBox(height: 12),
-                if (dest is TouristDestination) Text('Rating: ${(dest as TouristDestination).rating} / 5'),
-                if (dest is CulturalDestination) Text('Famous food: ${(dest as CulturalDestination).famousFood}'),
-                SizedBox(height: 12),
-                Row(children: [
-                  ElevatedButton.icon(
-                    icon: Icon(Icons.check),
-                    label: Text(dest.isVisited ? 'Visited' : 'Mark as Visited'),
-                    onPressed: dest.isVisited
-                        ? null
-                        : () {
-                            model.markVisited(dest.id);
-                            // return id so previous screen can optionally handle it
-                            Navigator.pop(context, dest.id);
-                          },
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    dest.name,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  SizedBox(width: 10),
-                  OutlinedButton.icon(
-                    icon: Icon(dest.isFavorite ? Icons.star : Icons.star_border),
-                    label: Text(dest.isFavorite ? 'Favorited' : 'Add to Favorites'),
-                    onPressed: () => model.toggleFavorite(dest.id),
-                  )
-                ])
-              ]),
-            )
+                  const SizedBox(height: 6),
+                  Text(dest.country),
+                  const SizedBox(height: 12),
+                  Text(dest.description),
+                  const SizedBox(height: 12),
+                  if (dest is TouristDestination)
+                    Text('Rating: ${dest.rating} / 5'),
+                  if (dest is CulturalDestination)
+                    Text('Famous food: ${dest.famousFood}'),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.check),
+                        label: Text(
+                            dest.isVisited ? 'Visited' : 'Mark as Visited'),
+                        onPressed: dest.isVisited
+                            ? null
+                            : () {
+                                model.markVisited(dest.id);
+                                Navigator.pop(context, dest.id);
+                              },
+                      ),
+                      const SizedBox(width: 10),
+                      OutlinedButton.icon(
+                        icon: Icon(
+                            dest.isFavorite ? Icons.star : Icons.star_border),
+                        label: Text(dest.isFavorite
+                            ? 'Favorited'
+                            : 'Add to Favorites'),
+                        onPressed: () => model.toggleFavorite(dest.id),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

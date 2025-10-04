@@ -17,6 +17,9 @@ import 'screens/settings_screen.dart';
 import 'screens/about_screen.dart';
 import 'screens/bookings_screen.dart';
 
+
+
+
 void main() {
   final initial = [
     TouristDestination(

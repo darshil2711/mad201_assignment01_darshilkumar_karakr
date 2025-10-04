@@ -12,20 +12,27 @@ import '../models/tourist_destination.dart';
 enum SortOption { name, country, rating }
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   String _query = '';
   SortOption _sort = SortOption.name;
 
+  /// Filters and sorts the list of destinations based on user input.
   List<Destination> _filterAndSort(List<Destination> list) {
     final q = _query.toLowerCase().trim();
-    var filtered = list.where((d) {
-      return d.name.toLowerCase().contains(q) || d.country.toLowerCase().contains(q);
+
+    // Filter by name or country
+    final filtered = list.where((d) {
+      return d.name.toLowerCase().contains(q) ||
+          d.country.toLowerCase().contains(q);
     }).toList();
 
+    // Sort by selected option
     switch (_sort) {
       case SortOption.name:
         filtered.sort((a, b) => a.name.compareTo(b.name));
@@ -35,12 +42,15 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       case SortOption.rating:
         filtered.sort((a, b) {
-          double ar = (a is TouristDestination) ? (a as TouristDestination).rating : 0.0;
-          double br = (b is TouristDestination) ? (b as TouristDestination).rating : 0.0;
-          return br.compareTo(ar); // descending
+          final double ar =
+              (a is TouristDestination) ? a.rating : 0.0;
+          final double br =
+              (b is TouristDestination) ? b.rating : 0.0;
+          return br.compareTo(ar); // descending order
         });
         break;
     }
+
     return filtered;
   }
 
@@ -54,37 +64,57 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            // Search Bar
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: TextField(
-                decoration: InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Search by name or country', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  hintText: 'Search by name or country',
+                  border: OutlineInputBorder(),
+                ),
                 onChanged: (v) => setState(() => _query = v),
               ),
             ),
+
+            // Sort Dropdown
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Row(
                 children: [
-                  Text('Sort:'),
-                  SizedBox(width: 8),
+                  const Text('Sort:'),
+                  const SizedBox(width: 8),
                   DropdownButton<SortOption>(
                     value: _sort,
-                    items: [
-                      DropdownMenuItem(value: SortOption.name, child: Text('Name')),
-                      DropdownMenuItem(value: SortOption.country, child: Text('Country')),
-                      DropdownMenuItem(value: SortOption.rating, child: Text('Rating')),
+                    items: const [
+                      DropdownMenuItem(
+                        value: SortOption.name,
+                        child: Text('Name'),
+                      ),
+                      DropdownMenuItem(
+                        value: SortOption.country,
+                        child: Text('Country'),
+                      ),
+                      DropdownMenuItem(
+                        value: SortOption.rating,
+                        child: Text('Rating'),
+                      ),
                     ],
-                    onChanged: (v) => setState(() => _sort = v ?? SortOption.name),
+                    onChanged: (v) =>
+                        setState(() => _sort = v ?? SortOption.name),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Text('${list.length} destinations'),
                 ],
               ),
             ),
+
+            // Destination List
             Expanded(
               child: ListView.builder(
                 itemCount: list.length,
-                itemBuilder: (ctx, i) => DestinationCard(destination: list[i]),
+                itemBuilder: (ctx, i) =>
+                    DestinationCard(destination: list[i]),
               ),
             ),
           ],
