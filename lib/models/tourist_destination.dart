@@ -1,9 +1,14 @@
-/// MAD201-01 Assignment 1
-/// Darshilkumar Karkar / A00203357
+// MAD201-01 Assignment 1
+// Student: Darshilkumar Karkar
+// Student ID: A00203357
+// Description: TouristDestination extends Destination with rating.
+
 import 'destination.dart';
 
+/// Tourist destination with a rating.
 class TouristDestination extends Destination {
   double rating;
+
   TouristDestination({
     required String id,
     required String name,
@@ -14,12 +19,12 @@ class TouristDestination extends Destination {
     bool isFavorite = false,
     bool isVisited = false,
   }) : super(
-         id: id,
-         name: name,
-         country: country,
-         description: description,
-         imageUrl: imageUrl,
-         isFavorite: isFavorite,
-         isVisited: isVisited,
-       );
+          id: id,
+          name: name,
+          country: country,
+          description: description,
+          imageUrl: imageUrl,
+          isFavorite: isFavorite,
+          isVisited: isVisited,
+        );
 }
